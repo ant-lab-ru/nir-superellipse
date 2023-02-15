@@ -14,8 +14,8 @@ int main() {
     stdio_init_all();
     init_hardware();
 
-    st7789_init();
-    st7789_fill_screen(ST7789_GREY_R050_G050_B050);
+    st7789_init(&display_spi_ctx);
+    st7789_fill_screen(&display_spi_ctx, ST7789_GREY_R050_G050_B050);
 
     while (1) {
         led_task();
