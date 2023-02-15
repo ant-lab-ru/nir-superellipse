@@ -1,0 +1,20 @@
+#ifndef __ST7789_COLORS_H
+#define __ST7789_COLORS_H
+
+#define ST7789_WHITE       0xFFFF
+#define ST7789_BLACK       0x0000
+#define ST7789_BLUE        0x1F00
+#define ST7789_RED         0x00F8
+#define ST7789_MAGENTA     0x1FF8
+#define ST7789_GREEN       0xE007
+#define ST7789_CYAN        0xFF7F
+#define ST7789_YELLOW      0xE0FF
+#define ST7789_TEST_COLOR  0x38AF
+#define ST7789_GRAY1       0xCF7B
+
+#define ST7789_GREEN_R165_G255_B165 0xF4A7
+#define ST7789_GREY_R200_G200_B200  0x59CE
+#define ST7789_GREY_R100_G100_B100  0x2C63
+#define ST7789_GREY_R050_G050_B050  0x8631
+
+#endif // #ifndef __ST7789_COLORS_H
