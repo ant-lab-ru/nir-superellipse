@@ -1,5 +1,17 @@
 #include "stdint.h"
-#include "st7789-font.h"
+#include "st7789-font-default.h"
+#include "st7789-driver.h"
+
+extern const uint8_t jetbrainsmono_bolditalic180_bmp[][3000];
+#define JETBRAINSMONO_BOLDITALIC180_WIDTH     120
+#define JETBRAINSMONO_BOLDITALIC180_HEIGHT    200
+
+st7789_font_t jb_mono_bolditalic120x200 = {
+    .height = JETBRAINSMONO_BOLDITALIC180_HEIGHT,
+    .width  = JETBRAINSMONO_BOLDITALIC180_WIDTH,
+    .data   = &jetbrainsmono_bolditalic180_bmp[0][0],
+    .name   = "default",
+};
 
 const uint8_t jetbrainsmono_bolditalic180_bmp[][3000] = {
     {   // JetBrainsMono-BoldItalic180_0
