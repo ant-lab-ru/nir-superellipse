@@ -1,19 +1,20 @@
 // SDK includes
 #include "hardware/gpio.h"
 #include "hardware/spi.h"
+#include "hardware/pio.h"
 
 #include "stdint.h"
+
+#include "../generated/ws2812.pio.h"
 
 // My includes
 #include "../pins.h"
 #include "../cfgs.h"
 #include "hardware.h"
 
-#include "../drivers/st7789-driver/st7789-driver.h"
+st7789_driver_t cdisp;
+ws2812_driver_t ws;
 
-spi_ctx_t display_spi_ctx;
-
-st7789_driver_t st7789_driver;
 
 /**
  * @brief Init GPIO pins
@@ -43,62 +44,88 @@ void init_gpio() {
  * 
  */
 void init_spi() {
-    display_spi_ctx.spix    = DISPLAY_SPI;
-    display_spi_ctx.bitrate = DISPLAY_SPI_SPEED;
-
-    spi_init(display_spi_ctx.spix, display_spi_ctx.bitrate);
+    spi_init(DISPLAY_SPI, DISPLAY_SPI_SPEED);
     gpio_set_function(PIN_ST7789_MOSI, GPIO_FUNC_SPI);
     gpio_set_function(PIN_ST7789_CLK,  GPIO_FUNC_SPI);
-
-    display_spi_ctx.write = spi_write_blocking;
 }
 
-void pwm_set_perc (const void* ctx, uint8_t* val) {
+void init_pio() {
+    uint offset = pio_add_program(WS2812_PIO, &ws2812_program);
+    ws2812_program_init(WS2812_PIO, WS2812_PIO_SM, offset, PIN_WS2812_CH1, 800000, false);
+}
+
+void put_pixel_rgb(uint8_t r, uint8_t g, uint8_t b) {
+    uint32_t pixel = 0;
+    pixel |= (g << 24);
+    pixel |= (r << 16);
+    pixel |= (b << 8);
+    pio_sm_put_blocking(WS2812_PIO, WS2812_PIO_SM, pixel);
+}
+
+void pwm_set_perc (uint8_t* val) {
     // !FIXME
     gpio_put(PIN_ST7789_BLK, 1);
 }
-void spi_w (const void* ctx, uint8_t* data, uint32_t size) {
-    spi_ctx_t* cctx = (spi_ctx_t*) ctx;
-    cctx->write(cctx->spix, data, size);
+
+void spi_display_w (const uint8_t* data, uint32_t size) {
+    spi_write_blocking(DISPLAY_SPI, data, size);
 }
-void gpio_cs_set(const void* ctx) {
+
+void gpio_cs_set() {
     gpio_put(PIN_ST7789_CS, 1);
 }
-void gpio_cs_reset(const void* ctx) {
+
+void gpio_cs_reset() {
     gpio_put(PIN_ST7789_CS, 0);
 }
-void gpio_dc_set(const void* ctx) {
+
+void gpio_dc_set() {
     gpio_put(PIN_ST7789_DC, 1);
 }
-void gpio_dc_reset(const void* ctx) {
+
+void gpio_dc_reset() {
     gpio_put(PIN_ST7789_DC, 0);
 }
-void gpio_rst_set(const void* ctx) {
+
+void gpio_rst_set() {
     gpio_put(PIN_ST7789_RST, 1);
 }
-void gpio_rst_reset(const void* ctx) {
+
+void gpio_rst_reset() {
     gpio_put(PIN_ST7789_RST, 0);
 }
-void delay_us(const void* ctx, uint64_t time_us) {
+
+void delay_us(uint64_t time_us) {
     sleep_us(time_us);
 }
 
-void init_display_driver() {
-    st7789_driver.spi_w     = spi_w;
-    st7789_driver.cs_set    = gpio_cs_set;
-    st7789_driver.cs_reset  = gpio_cs_reset;
-    st7789_driver.dc_set    = gpio_dc_set;
-    st7789_driver.dc_reset  = gpio_dc_reset;
-    st7789_driver.rst_set   = gpio_rst_set;
-    st7789_driver.rst_reset = gpio_rst_reset;
-    st7789_driver.set_brightness = pwm_set_perc;
-    st7789_driver.delay_us          = delay_us;
+void init_cdisp() {
+    cdisp.public.spi_w = spi_display_w;
+    cdisp.public.cs_set = gpio_cs_set;
+    cdisp.public.cs_reset = gpio_cs_reset;
+    cdisp.public.dc_set = gpio_dc_set;
+    cdisp.public.dc_reset = gpio_dc_reset;
+    cdisp.public.rst_set = gpio_rst_set;
+    cdisp.public.rst_reset = gpio_rst_reset;
+    cdisp.public.delay_us = sleep_us;
+    cdisp.public.set_brightness = pwm_set_perc;
+}
+
+void init_ws () {
+    ws.len  = WS2812_LEN;
+    ws.w    = put_pixel_rgb;
 }
 
 void init_hardware() {
 
     init_gpio();
     init_spi();
+    init_pio();
 
-    init_display_driver();
+    init_cdisp();
+    st7789_init(&cdisp);
+    st7789_fill_screen(&cdisp, ST7789_GREY_R050_G050_B050);
+
+    init_ws();
+    ws2812_monochrome(&ws, 0, 0, 0);
 }

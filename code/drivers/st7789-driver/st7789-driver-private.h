@@ -131,15 +131,15 @@
 #define ST7789_COLOR_MODE_18bit 0x66    //  RGB666 (18bit)
 
 /* Private functions */
-void st7789_on(const void* ctx);
-void st7789_off(const void* ctx);
-void st7789_set_rgb565(const void* ctx);
-st7789_font_t* st7789_get_font_by_name(const char* font_name);
-void st7789_set_address_window (const void* ctx, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
+void st7789_on(st7789_driver_t* st_ctx);
+void st7789_off(st7789_driver_t* st_ctx);
+void st7789_set_rgb565(st7789_driver_t* st_ctx);
+st7789_font_t* st7789_get_font_by_name(st7789_driver_t* st_ctx, const char* font_name);
+void st7789_set_address_window (st7789_driver_t* st_ctx, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1);
 
-void st7789_write8_data(const void* ctx, uint8_t data);
-void st7789_write8_command(const void* ctx, uint8_t command);
-void st7789_write_data(const void* ctx, const uint8_t *data, uint32_t size);
+void st7789_write8_data(st7789_driver_t* st_ctx, uint8_t data);
+void st7789_write8_command(st7789_driver_t* st_ctx, uint8_t command);
+void st7789_write_data(st7789_driver_t* st_ctx, const uint8_t *data, uint32_t size);
 
 typedef struct {
 	int16_t x;

@@ -2,18 +2,13 @@
 #define __HARDWARE_H
 
 #include "hardware/spi.h"
+#include "../drivers/st7789-driver/st7789-driver.h"
+#include "../drivers/ws2812-driver/ws2812-driver.h"
 
-typedef int (*spi_wr) (spi_inst_t*, const uint8_t*, size_t);
-
-typedef struct {
-    void* spix;
-    uint32_t    bitrate;
-    spi_wr      write;
-} spi_ctx_t;
-
-
-extern spi_ctx_t display_spi_ctx;
+extern st7789_driver_t cdisp;
+extern ws2812_driver_t ws;
 
 void init_hardware();
+void put_pixel(uint32_t pixel_grb);
 
 #endif // #ifndef __HARDWARE_H
