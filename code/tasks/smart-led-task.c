@@ -1,9 +1,11 @@
 #include "smart-led-task.h"
 #include "pico/stdlib.h"
 #include "stdint.h"
+#include "stdbool.h"
 
 #include "../drivers/ws2812-driver/ws2812-driver.h"
 #include "../bsp/hardware.h"
+#include "../pins.h"
 
 uint64_t timestamp_smart_led = 0;
 struct SmartLed {
@@ -12,19 +14,41 @@ struct SmartLed {
     uint8_t b;
     uint8_t state;
     uint32_t t;
+    uint32_t b_counter;
+    bool b_flag;
 };
 
 static struct SmartLed smart_led_colors = {
     .r = 0xff,
     .g = 0,
     .b = 0,
-    .state = 1,
+    .state = 0,
     .t = 0,
+
+    .b_counter = 0,
+    .b_flag = false,
 };
 
 static uint8_t state = 0;
 
 void smart_led_task() {
+    if (gpio_get(PIN_BUTTON) == 0) {
+        if (smart_led_colors.b_counter >= 20000 && smart_led_colors.b_flag == false) {
+            smart_led_colors.state++;
+            if (smart_led_colors.state > 1) {
+                smart_led_colors.state = 0;
+            }
+            smart_led_colors.b_flag == true;
+        }
+        smart_led_colors.b_counter++;
+        if (smart_led_colors.b_counter > 20000) {
+            smart_led_colors.b_counter = 20000;
+        }
+
+    } else {
+        smart_led_colors.b_counter = 0;
+        smart_led_colors.b_flag == false;
+    }
     switch(smart_led_colors.state){
     case 0: 
         if (time_us_64() - timestamp_smart_led > SMART_LED_TASK_PERIOD_US) {

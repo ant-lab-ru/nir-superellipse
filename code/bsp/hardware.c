@@ -37,6 +37,10 @@ void init_gpio() {
 
     gpio_init(PIN_ST7789_CS);
     gpio_set_dir(PIN_ST7789_CS, GPIO_OUT);
+
+    gpio_init(PIN_BUTTON);
+    gpio_set_dir(PIN_BUTTON, GPIO_IN);
+    gpio_pull_up(PIN_BUTTON);
 }
 
 /**
