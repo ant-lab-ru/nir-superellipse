@@ -1,7 +1,7 @@
 #ifndef __PINS_H
 #define __PINS_H
 
-#define PIN_WS2812_CH1  23
+#define PIN_WS2812_CH1  29
 #define PIN_LED         25
 
 #define PIN_ST7789_BLK  17
