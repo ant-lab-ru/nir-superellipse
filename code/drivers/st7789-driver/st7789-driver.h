@@ -47,7 +47,7 @@ typedef struct {
 	uint8_t rotation;
 	uint16_t buffer[ST7789_WIDTH * ST7789_HEIGHT];
 
-	st7789_font_t* fonts[256];
+	st7789_font_t* fonts[32];
 	uint8_t fonts_number;
 
 } st7789_driver_t;

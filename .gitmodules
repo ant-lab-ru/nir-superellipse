@@ -1,0 +1,6 @@
+[submodule "deneg-lib"]
+	path = deneg-lib
+	url = https://github.com/egordenisov/deneg-lib
+[submodule "code/deneg-lib"]
+	path = code/deneg-lib
+	url = https://github.com/egordenisov/deneg-lib
