@@ -13,7 +13,13 @@
 #include "hardware.h"
 
 st7789_driver_t cdisp;
+st7789_driver_t rdisp;
+st7789_driver_t ldisp;
 ws2812_driver_t ws;
+
+encoder_ctx_t encoder0;
+
+uint16_t disp_buffer [ST7789_WIDTH * ST7789_HEIGHT];
 
 
 /**
@@ -29,18 +35,39 @@ void init_gpio() {
     gpio_init(PIN_ST7789_DC);
     gpio_set_dir(PIN_ST7789_DC, GPIO_OUT);
 
-    gpio_init(PIN_ST7789_RST);
-    gpio_set_dir(PIN_ST7789_RST, GPIO_OUT);
+    gpio_init(PIN_ST7789_RST0);
+    gpio_set_dir(PIN_ST7789_RST0, GPIO_OUT);
+
+    gpio_init(PIN_ST7789_RST1);
+    gpio_set_dir(PIN_ST7789_RST1, GPIO_OUT);
+
+    gpio_init(PIN_ST7789_RST2);
+    gpio_set_dir(PIN_ST7789_RST2, GPIO_OUT);
 
     gpio_init(PIN_ST7789_BLK);
     gpio_set_dir(PIN_ST7789_BLK, GPIO_OUT);
+    gpio_put(PIN_ST7789_BLK, 0);
 
-    gpio_init(PIN_ST7789_CS);
-    gpio_set_dir(PIN_ST7789_CS, GPIO_OUT);
+    gpio_init(PIN_ST7789_CS0);
+    gpio_set_dir(PIN_ST7789_CS0, GPIO_OUT);
+
+    gpio_init(PIN_ST7789_CS1);
+    gpio_set_dir(PIN_ST7789_CS1, GPIO_OUT);
+
+    gpio_init(PIN_ST7789_CS2);
+    gpio_set_dir(PIN_ST7789_CS2, GPIO_OUT);
 
     gpio_init(PIN_BUTTON);
     gpio_set_dir(PIN_BUTTON, GPIO_IN);
     gpio_pull_up(PIN_BUTTON);
+
+    gpio_init(PIN_ENCODER_A);
+    gpio_set_dir(PIN_ENCODER_A, GPIO_IN);
+    gpio_pull_up(PIN_ENCODER_A);
+
+    gpio_init(PIN_ENCODER_B);
+    gpio_set_dir(PIN_ENCODER_B, GPIO_IN);
+    gpio_pull_up(PIN_ENCODER_B);
 }
 
 /**
@@ -68,19 +95,40 @@ void put_pixel_rgb(uint8_t r, uint8_t g, uint8_t b) {
 
 void pwm_set_perc (uint8_t* val) {
     // !FIXME
-    gpio_put(PIN_ST7789_BLK, 1);
+    if (*val > 0) {
+        gpio_put(PIN_ST7789_BLK, 1);
+    }
+    else {
+        gpio_put(PIN_ST7789_BLK, 0);
+    }
 }
 
 void spi_display_w (const uint8_t* data, uint32_t size) {
     spi_write_blocking(DISPLAY_SPI, data, size);
 }
 
-void gpio_cs_set() {
-    gpio_put(PIN_ST7789_CS, 1);
+void gpio_cs0_set() {
+    gpio_put(PIN_ST7789_CS0, 1);
 }
 
-void gpio_cs_reset() {
-    gpio_put(PIN_ST7789_CS, 0);
+void gpio_cs0_reset() {
+    gpio_put(PIN_ST7789_CS0, 0);
+}
+
+void gpio_cs1_set() {
+    gpio_put(PIN_ST7789_CS1, 1);
+}
+
+void gpio_cs1_reset() {
+    gpio_put(PIN_ST7789_CS1, 0);
+}
+
+void gpio_cs2_set() {
+    gpio_put(PIN_ST7789_CS2, 1);
+}
+
+void gpio_cs2_reset() {
+    gpio_put(PIN_ST7789_CS2, 0);
 }
 
 void gpio_dc_set() {
@@ -91,33 +139,84 @@ void gpio_dc_reset() {
     gpio_put(PIN_ST7789_DC, 0);
 }
 
-void gpio_rst_set() {
-    gpio_put(PIN_ST7789_RST, 1);
+void gpio_rst0_set() {
+    gpio_put(PIN_ST7789_RST0, 1);
 }
 
-void gpio_rst_reset() {
-    gpio_put(PIN_ST7789_RST, 0);
+void gpio_rst0_reset() {
+    gpio_put(PIN_ST7789_RST0, 0);
+}
+
+void gpio_rst1_set() {
+    gpio_put(PIN_ST7789_RST1, 1);
+}
+
+void gpio_rst1_reset() {
+    gpio_put(PIN_ST7789_RST1, 0);
+}
+
+void gpio_rst2_set() {
+    gpio_put(PIN_ST7789_RST2, 1);
+}
+
+void gpio_rst2_reset() {
+    gpio_put(PIN_ST7789_RST2, 0);
 }
 
 void delay_us(uint64_t time_us) {
     sleep_us(time_us);
 }
+bool gpio_get_enc_a() {
+    return gpio_get(PIN_ENCODER_A);
+}
+bool gpio_get_enc_b() {
+    return gpio_get(PIN_ENCODER_B);
+}
 
 void init_cdisp() {
     cdisp.public.spi_w = spi_display_w;
-    cdisp.public.cs_set = gpio_cs_set;
-    cdisp.public.cs_reset = gpio_cs_reset;
+    cdisp.public.cs_set = gpio_cs1_set;
+    cdisp.public.cs_reset = gpio_cs1_reset;
     cdisp.public.dc_set = gpio_dc_set;
     cdisp.public.dc_reset = gpio_dc_reset;
-    cdisp.public.rst_set = gpio_rst_set;
-    cdisp.public.rst_reset = gpio_rst_reset;
+    cdisp.public.rst_set = gpio_rst1_set;
+    cdisp.public.rst_reset = gpio_rst1_reset;
     cdisp.public.delay_us = sleep_us;
     cdisp.public.set_brightness = pwm_set_perc;
+}
+
+void init_rdisp() {
+    rdisp.public.spi_w = spi_display_w;
+    rdisp.public.cs_set = gpio_cs2_set;
+    rdisp.public.cs_reset = gpio_cs2_reset;
+    rdisp.public.dc_set = gpio_dc_set;
+    rdisp.public.dc_reset = gpio_dc_reset;
+    rdisp.public.rst_set = gpio_rst2_set;
+    rdisp.public.rst_reset = gpio_rst2_reset;
+    rdisp.public.delay_us = sleep_us;
+    rdisp.public.set_brightness = pwm_set_perc;
+}
+
+void init_ldisp() {
+    ldisp.public.spi_w = spi_display_w;
+    ldisp.public.cs_set = gpio_cs0_set;
+    ldisp.public.cs_reset = gpio_cs0_reset;
+    ldisp.public.dc_set = gpio_dc_set;
+    ldisp.public.dc_reset = gpio_dc_reset;
+    ldisp.public.rst_set = gpio_rst0_set;
+    ldisp.public.rst_reset = gpio_rst0_reset;
+    ldisp.public.delay_us = sleep_us;
+    ldisp.public.set_brightness = pwm_set_perc;
 }
 
 void init_ws () {
     ws.len  = WS2812_LEN;
     ws.w    = put_pixel_rgb;
+}
+
+void blink_led() {
+    bool st = gpio_get(PIN_LED);
+    gpio_put(PIN_LED, !st);
 }
 
 void init_hardware() {
@@ -127,9 +226,20 @@ void init_hardware() {
     init_pio();
 
     init_cdisp();
-    st7789_init(&cdisp);
-    st7789_fill_screen(&cdisp, ST7789_GREY_R050_G050_B050);
+    st7789_init(&cdisp, &disp_buffer);
+    st7789_fill_screen(&cdisp, ST7789_GREEN_R165_G255_B165);
+    init_rdisp();
+    st7789_init(&rdisp, &disp_buffer);
+    st7789_fill_screen(&rdisp, ST7789_BLUE_R165_G165_B255);
+    init_ldisp();
+    st7789_init(&ldisp, &disp_buffer);
+    st7789_fill_screen(&ldisp, ST7789_RED_R255_G165_B165);
+
+    st7789_set_brightness(&cdisp, 100);
 
     init_ws();
     ws2812_monochrome(&ws, 0, 0, 0);
+
+    encoder_init(&encoder0, time_us_64, gpio_get_enc_a, false, gpio_get_enc_b, false, false);
+    encoder_set_cw_cb(&encoder0, blink_led);
 }

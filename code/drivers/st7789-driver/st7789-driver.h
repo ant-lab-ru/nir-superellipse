@@ -5,7 +5,7 @@
 #include "st7789-colors.h"
 
 #define ST7789_WIDTH 240
-#define ST7789_HEIGHT 240
+#define ST7789_HEIGHT 280
 
 typedef void (*st7789_spi_w)  	(const uint8_t*, uint32_t);
 typedef void (*st7789_pwm_rw)   (uint8_t*);
@@ -25,7 +25,6 @@ typedef struct {
 	st7789_gpio_put	rst_reset;
 
 	st7789_pwm_rw  	set_brightness;
-	st7789_pwm_rw  	get_brightness;
 
 	st7789_delay_us delay_us;
 
@@ -45,20 +44,23 @@ typedef struct {
 
 	// Private
 	uint8_t rotation;
-	uint16_t buffer[ST7789_WIDTH * ST7789_HEIGHT];
+	uint16_t (*buffer)[ST7789_WIDTH * ST7789_HEIGHT];
 
 	st7789_font_t* fonts[32];
 	uint8_t fonts_number;
 
+	uint8_t brightness;
+
 } st7789_driver_t;
 
-#define ST7789_DEFAULT_ROTATION  	1
-#define ST7789_DEFAULT_BRIGHTNESS 	100
+#define ST7789_DEFAULT_ROTATION  	2
+#define ST7789_DEFAULT_BRIGHTNESS 	0
 #define ST7789_DEFAULT_COLOR  		ST7789_BLACK
 
-void st7789_init(st7789_driver_t* st_ctx);
+void st7789_init(st7789_driver_t* st_ctx, uint16_t (*buffer)[ST7789_WIDTH * ST7789_HEIGHT]);
 void st7789_set_rotation (st7789_driver_t* st_ctx, uint8_t m);
 void st7789_fill_screen (st7789_driver_t* st_ctx, uint16_t color);
+void st7789_set_brightness (st7789_driver_t* st_ctx, uint8_t brightness);
 
 void st7789_letter (st7789_driver_t* st_ctx, unsigned char letter, uint16_t x, uint16_t y, uint16_t font_color, uint16_t background_color, const char* font_name);
 

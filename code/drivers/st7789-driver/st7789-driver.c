@@ -20,11 +20,14 @@ const st7789_rotations_t st7789_rotations = {
 	.rotation[3].y = Y_SHIFT_R3,
 };
 
-void st7789_init(st7789_driver_t* st_ctx)
+void st7789_init(st7789_driver_t* st_ctx, uint16_t (*buffer)[ST7789_WIDTH * ST7789_HEIGHT])
 {
 	/* Default font init */
 	st_ctx->fonts[0] = &jb_mono_bolditalic120x200;
 	st_ctx->fonts_number = 1;
+
+	/*  */
+	st_ctx->buffer = buffer;
 
 	/* Power on delay */
 	st_ctx->public.delay_us(250*1000);
@@ -102,8 +105,8 @@ void st7789_init(st7789_driver_t* st_ctx)
 	st_ctx->public.delay_us(200*1000); // ?????????????????????????????????
 	
 	/* Set default brightness level */
-	uint8_t st_br = ST7789_DEFAULT_BRIGHTNESS;
-	st_ctx->public.set_brightness(&st_br);
+	st_ctx->brightness = ST7789_DEFAULT_BRIGHTNESS;
+	st_ctx->public.set_brightness(&(st_ctx->brightness));
 }
 
 void st7789_add_custom_fonts (st7789_driver_t* st_ctx, st7789_font_t* custom_fonts_array_ptr, uint8_t amount) {
@@ -135,9 +138,9 @@ void st7789_fill (st7789_driver_t* st_ctx, uint16_t color, uint16_t x, uint16_t 
 	uint16_t i, j;
 	for (i = 0; i < w; i++)
 		for (j = 0; j < h; j++)
-			st_ctx->buffer[j*w + i] = color;
+			(*st_ctx->buffer)[j*w + i] = color;
 
-	st7789_draw(st_ctx, x, y, w, h, st_ctx->buffer);
+	st7789_draw(st_ctx, x, y, w, h, (*st_ctx->buffer));
 }
 
 void st7789_draw (st7789_driver_t* st_ctx, uint16_t x, uint16_t y, uint16_t w, uint16_t h, const uint16_t *data) {
@@ -166,12 +169,12 @@ void st7789_letter (st7789_driver_t* st_ctx, unsigned char letter, uint16_t x, u
 		{
             bool bit = !!((*(font->data + letter*bytes_size + j)) & (1 << i));
 			if (bit == 1)
-				st_ctx->buffer[j*8 + i] = font_color;
+				(*st_ctx->buffer)[j*8 + i] = font_color;
 			else
-				st_ctx->buffer[j*8 + i] = background_color;
+				(*st_ctx->buffer)[j*8 + i] = background_color;
 		}
 	}st_ctx->public.delay_us(2*1000);
-	st7789_draw(st_ctx, x, y, font->width, font->height, st_ctx->buffer);
+	st7789_draw(st_ctx, x, y, font->width, font->height, (*st_ctx->buffer));
 }
 
 void st7789_frame (st7789_driver_t* st_ctx, uint16_t color, uint16_t x, uint16_t y, uint16_t w, uint16_t h)
@@ -271,6 +274,11 @@ void st7789_line_vertical (st7789_driver_t* st_ctx, uint16_t color, uint16_t x, 
 
 void st7789_fill_screen (st7789_driver_t* st_ctx, uint16_t color) {
 	st7789_fill(st_ctx, color, 0, 0, ST7789_WIDTH, ST7789_HEIGHT);
+}
+
+void st7789_set_brightness (st7789_driver_t* st_ctx, uint8_t brightness) {
+	st_ctx->public.set_brightness(&brightness);
+	st_ctx->brightness = brightness;
 }
 
 //===================================================================

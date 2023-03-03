@@ -6,6 +6,7 @@
 #include "tasks/display-task.h"
 #include "tasks/smart-led-task.h"
 
+#include "deneg-lib/drivers/encoder-driver/include/encoder-driver.h"
 
 int main() {
 
@@ -13,8 +14,10 @@ int main() {
     init_hardware();
 
     while (1) {
-        led_task();
+        //led_task();
         display_task();
         smart_led_task();
+
+        encoder_task(&encoder0);
     }
 }
