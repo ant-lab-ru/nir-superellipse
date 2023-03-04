@@ -6,89 +6,34 @@
 #include "../drivers/ws2812-driver/ws2812-driver.h"
 #include "../bsp/hardware.h"
 #include "../pins.h"
+#include "../main.h"
+
+extern struct Superellipse superellipse;
 
 uint64_t timestamp_smart_led = 0;
-struct SmartLed {
-    uint8_t r;
-    uint8_t g;
-    uint8_t b;
-    uint8_t state;
-    uint32_t t;
-    uint32_t b_counter;
-    bool b_flag;
-};
-
-static struct SmartLed smart_led_colors = {
-    .r = 0xff,
-    .g = 0,
-    .b = 0,
-    .state = 0,
-    .t = 0,
-
-    .b_counter = 0,
-    .b_flag = false,
-};
-
-static uint8_t state = 0;
 
 void smart_led_task() {
-    if (gpio_get(PIN_BUTTON) == 0) {
-        if (smart_led_colors.b_counter >= 20000 && smart_led_colors.b_flag == false) {
-            smart_led_colors.state++;
-            if (smart_led_colors.state > 1) {
-                smart_led_colors.state = 0;
-            }
-            smart_led_colors.b_flag == true;
-        }
-        smart_led_colors.b_counter++;
-        if (smart_led_colors.b_counter > 20000) {
-            smart_led_colors.b_counter = 20000;
-        }
 
-    } else {
-        smart_led_colors.b_counter = 0;
-        smart_led_colors.b_flag == false;
-    }
-    switch(smart_led_colors.state){
-    case 0: 
-        if (time_us_64() - timestamp_smart_led > SMART_LED_TASK_PERIOD_US) {
-            switch (state){
-                case 0:
-                    smart_led_colors.g++;
-                    if (smart_led_colors.g == 0xff) state = 1;
-                    break;
-                case 1:
-                    smart_led_colors.r--;
-                    if (smart_led_colors.r == 0) state = 2;
-                    break;
-                case 2:
-                    smart_led_colors.b++;
-                    if (smart_led_colors.b == 0xff) state = 3;
-                    break;
-                case 3:
-                    smart_led_colors.g--;
-                    if (smart_led_colors.g == 0) state = 4;
-                    break;
-                case 4:
-                    smart_led_colors.r++;
-                    if (smart_led_colors.r == 0xff) state = 5;
-                    break;
-                case 5:
-                    smart_led_colors.b--;
-                    if (smart_led_colors.b == 0) state = 0;
-                    break;
-            }
-            ws2812_monochrome(&ws, smart_led_colors.r, smart_led_colors.g, smart_led_colors.b);
-            timestamp_smart_led = time_us_64();
-        }
-        break;
-    case 1:
-        if (time_us_64() - timestamp_smart_led > SMART_LED_TASK_SNAKES_PERIOD_US){
-            smart_led_colors.t++;
-            ws2812_pattern_snakes(&ws, smart_led_colors.t);
-            timestamp_smart_led = time_us_64();
-        }
+    ws2812_color_t color;
+    switch (superellipse.state)
+    {
+    case STATE_MONOCHROME:;
+        color.r = superellipse.color.r;
+        color.g = superellipse.color.g;
+        color.b = superellipse.color.b;
+        ws2812_monochrome(&ws, color);
         break;
 
+    case STATE_BLINK:
+        
+        switch (superellipse.blink_mode) {
+            case BLINK_MODE_WAVE:
+                
+                break;
+        }
+        break;
+    
+    default:
+        break;
     }
 }

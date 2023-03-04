@@ -19,6 +19,7 @@ set (TASKS
   tasks/led-task.c
   tasks/display-task.c
   tasks/smart-led-task.c
+  tasks/logic-task.c
 )
 
 add_executable(nir-superellipse

@@ -4,5 +4,6 @@
 #define DISPLAY_TASK_PERIOD_US  (100 * 1000)
 
 void display_task();
+void display_task_init();
 
 #endif // #ifndef __DISPLAY_H

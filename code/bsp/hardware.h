@@ -11,6 +11,8 @@ extern st7789_driver_t cdisp;
 extern st7789_driver_t ldisp;
 extern ws2812_driver_t ws;
 extern encoder_ctx_t encoder0;
+extern encoder_ctx_t encoder1;
+extern encoder_ctx_t encoder2;
 
 void init_hardware();
 void put_pixel(uint32_t pixel_grb);

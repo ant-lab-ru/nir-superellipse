@@ -10,6 +10,7 @@
 // My includes
 #include "../pins.h"
 #include "../cfgs.h"
+#include "../main.h"
 #include "hardware.h"
 
 st7789_driver_t cdisp;
@@ -18,6 +19,8 @@ st7789_driver_t ldisp;
 ws2812_driver_t ws;
 
 encoder_ctx_t encoder0;
+encoder_ctx_t encoder1;
+encoder_ctx_t encoder2;
 
 uint16_t disp_buffer [ST7789_WIDTH * ST7789_HEIGHT];
 
@@ -61,13 +64,29 @@ void init_gpio() {
     gpio_set_dir(PIN_BUTTON, GPIO_IN);
     gpio_pull_up(PIN_BUTTON);
 
-    gpio_init(PIN_ENCODER_A);
-    gpio_set_dir(PIN_ENCODER_A, GPIO_IN);
-    gpio_pull_up(PIN_ENCODER_A);
+    gpio_init(PIN_ENCODER0_A);
+    gpio_set_dir(PIN_ENCODER0_A, GPIO_IN);
+    gpio_pull_up(PIN_ENCODER0_A);
 
-    gpio_init(PIN_ENCODER_B);
-    gpio_set_dir(PIN_ENCODER_B, GPIO_IN);
-    gpio_pull_up(PIN_ENCODER_B);
+    gpio_init(PIN_ENCODER0_B);
+    gpio_set_dir(PIN_ENCODER0_B, GPIO_IN);
+    gpio_pull_up(PIN_ENCODER0_B);
+
+    gpio_init(PIN_ENCODER1_A);
+    gpio_set_dir(PIN_ENCODER1_A, GPIO_IN);
+    gpio_pull_up(PIN_ENCODER1_A);
+
+    gpio_init(PIN_ENCODER1_B);
+    gpio_set_dir(PIN_ENCODER1_B, GPIO_IN);
+    gpio_pull_up(PIN_ENCODER1_B);
+
+    gpio_init(PIN_ENCODER2_A);
+    gpio_set_dir(PIN_ENCODER2_A, GPIO_IN);
+    gpio_pull_up(PIN_ENCODER2_A);
+
+    gpio_init(PIN_ENCODER2_B);
+    gpio_set_dir(PIN_ENCODER2_B, GPIO_IN);
+    gpio_pull_up(PIN_ENCODER2_B);
 }
 
 /**
@@ -166,11 +185,23 @@ void gpio_rst2_reset() {
 void delay_us(uint64_t time_us) {
     sleep_us(time_us);
 }
-bool gpio_get_enc_a() {
-    return gpio_get(PIN_ENCODER_A);
+bool gpio_get_enc0_a() {
+    return gpio_get(PIN_ENCODER0_A);
 }
-bool gpio_get_enc_b() {
-    return gpio_get(PIN_ENCODER_B);
+bool gpio_get_enc0_b() {
+    return gpio_get(PIN_ENCODER0_B);
+}
+bool gpio_get_enc1_a() {
+    return gpio_get(PIN_ENCODER1_A);
+}
+bool gpio_get_enc1_b() {
+    return gpio_get(PIN_ENCODER1_B);
+}
+bool gpio_get_enc2_a() {
+    return gpio_get(PIN_ENCODER2_A);
+}
+bool gpio_get_enc2_b() {
+    return gpio_get(PIN_ENCODER2_B);
 }
 
 void init_cdisp() {
@@ -227,19 +258,20 @@ void init_hardware() {
 
     init_cdisp();
     st7789_init(&cdisp, &disp_buffer);
-    st7789_fill_screen(&cdisp, ST7789_GREEN_R165_G255_B165);
+
     init_rdisp();
     st7789_init(&rdisp, &disp_buffer);
-    st7789_fill_screen(&rdisp, ST7789_BLUE_R165_G165_B255);
+
     init_ldisp();
     st7789_init(&ldisp, &disp_buffer);
-    st7789_fill_screen(&ldisp, ST7789_RED_R255_G165_B165);
 
     st7789_set_brightness(&cdisp, 100);
 
     init_ws();
-    ws2812_monochrome(&ws, 0, 0, 0);
 
-    encoder_init(&encoder0, time_us_64, gpio_get_enc_a, false, gpio_get_enc_b, false, false);
-    encoder_set_cw_cb(&encoder0, blink_led);
+    ws2812_off(&ws);
+
+    encoder_init(&encoder0, time_us_64, gpio_get_enc0_a, false, gpio_get_enc0_b, false, false);
+    encoder_init(&encoder1, time_us_64, gpio_get_enc1_a, false, gpio_get_enc1_b, false, false);
+    encoder_init(&encoder2, time_us_64, gpio_get_enc2_a, false, gpio_get_enc2_b, false, false);
 }

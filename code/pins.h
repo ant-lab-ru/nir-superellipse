@@ -19,7 +19,13 @@
 #define PIN_ST7789_RST1 21
 #define PIN_ST7789_RST2 26
 
-#define PIN_ENCODER_A   14
-#define PIN_ENCODER_B   15
+#define PIN_ENCODER0_A   14
+#define PIN_ENCODER0_B   15
+
+#define PIN_ENCODER1_A   14
+#define PIN_ENCODER1_B   15
+
+#define PIN_ENCODER2_A   14
+#define PIN_ENCODER2_B   15
 
 #endif // #ifndef __PINS_H
