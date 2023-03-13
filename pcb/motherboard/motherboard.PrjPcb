@@ -72,6 +72,27 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=NJBBXUWA
 
+[Document3]
+DocumentPath=Managed\OutputJobs\25802FFB-992F-4CC7-ADBB-64D3790CFE54\OUT-0001-A.4.OutJob
+AnnotationEnabled=1
+AnnotateStartValue=1
+AnnotationIndexControlEnabled=0
+AnnotateSuffix=
+AnnotateScope=All
+AnnotateOrder=-1
+DoLibraryUpdate=1
+DoDatabaseUpdate=1
+ClassGenCCAutoEnabled=1
+ClassGenCCAutoRoomEnabled=1
+ClassGenNCAutoScope=None
+DItemRevisionGUID=
+GenerateClassCluster=0
+DocumentUniqueId=
+
+[GeneratedDocument1]
+DocumentPath=Project Outputs for motherboard\Design Rule Check - motherboard.html
+DItemRevisionGUID=
+
 [Configuration1]
 Name=Sources
 ParameterCount=0
