@@ -5,5 +5,6 @@
 #define SMART_LED_TASK_SNAKES_PERIOD_US (200*1000)
 
 void smart_led_task();
+void smart_led_task_init();
 
 #endif // #ifndef __SMART_LED_TASK_H

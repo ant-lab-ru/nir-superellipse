@@ -1,7 +1,7 @@
 #ifndef __CFGS_H
 #define __CFGS_H
 
-#define WS2812_LEN          300
+#define WS2812_LEN          1
 
 #define DISPLAY_SPI         spi0
 #define DISPLAY_SPI_SPEED   (40 * 1000 * 1000)

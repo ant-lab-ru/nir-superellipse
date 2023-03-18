@@ -1,4 +1,15 @@
 #include "ws2812-driver.h"
+#include "string.h"
+
+bool ws2812_init (ws2812_driver_t* ws_ctx, write_rgb_pixel w, uint32_t len) {
+    if (ws_ctx == NULL) {
+        return false;
+    }
+    ws_ctx->w = w;
+    ws_ctx->len = len;
+
+    return true;
+}
 
 static void ws2812_hsv_to_rgb (ws2812_hsv_t hsv, ws2812_color_t* rgb) {
     uint8_t r = 0, g = 0, b = 0;

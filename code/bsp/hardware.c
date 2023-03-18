@@ -32,6 +32,12 @@ uint16_t disp_buffer [ST7789_WIDTH * ST7789_HEIGHT];
  */
 void init_gpio() {
 
+    // Del this!!!!!
+    gpio_init(0);
+    gpio_set_dir(0, GPIO_OUT);
+    gpio_put(0, 1);
+    // End of Del 
+
     gpio_init(PIN_LED);
     gpio_set_dir(PIN_LED, GPIO_OUT);
 
@@ -87,6 +93,18 @@ void init_gpio() {
     gpio_init(PIN_ENCODER2_B);
     gpio_set_dir(PIN_ENCODER2_B, GPIO_IN);
     gpio_pull_up(PIN_ENCODER2_B);
+
+    gpio_init(PIN_ENCODER0_SW);
+    gpio_set_dir(PIN_ENCODER0_SW, GPIO_IN);
+    gpio_pull_up(PIN_ENCODER0_SW);
+
+    gpio_init(PIN_ENCODER1_SW);
+    gpio_set_dir(PIN_ENCODER1_SW, GPIO_IN);
+    gpio_pull_up(PIN_ENCODER1_SW);
+
+    gpio_init(PIN_ENCODER2_SW);
+    gpio_set_dir(PIN_ENCODER2_SW, GPIO_IN);
+    gpio_pull_up(PIN_ENCODER2_SW);
 }
 
 /**
@@ -101,7 +119,7 @@ void init_spi() {
 
 void init_pio() {
     uint offset = pio_add_program(WS2812_PIO, &ws2812_program);
-    ws2812_program_init(WS2812_PIO, WS2812_PIO_SM, offset, PIN_WS2812_CH1, 800000, false);
+    ws2812_program_init(WS2812_PIO, WS2812_PIO_SM, offset, PIN_WS2812, 800000, false);
 }
 
 void put_pixel_rgb(uint8_t r, uint8_t g, uint8_t b) {
@@ -240,11 +258,6 @@ void init_ldisp() {
     ldisp.public.set_brightness = pwm_set_perc;
 }
 
-void init_ws () {
-    ws.len  = WS2812_LEN;
-    ws.w    = put_pixel_rgb;
-}
-
 void blink_led() {
     bool st = gpio_get(PIN_LED);
     gpio_put(PIN_LED, !st);
@@ -265,10 +278,7 @@ void init_hardware() {
     init_ldisp();
     st7789_init(&ldisp, &disp_buffer);
 
-    st7789_set_brightness(&cdisp, 100);
-
-    init_ws();
-
+    ws2812_init(&ws, put_pixel_rgb, WS2812_LEN);
     ws2812_off(&ws);
 
     encoder_init(&encoder0, time_us_64, gpio_get_enc0_a, false, gpio_get_enc0_b, false, false);

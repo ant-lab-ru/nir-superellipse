@@ -2,7 +2,7 @@
 #define __WS2812_DRIVER_H
 
 #include "stdint.h"
-
+#include "stdbool.h"
 
 typedef struct {
     uint8_t r;
@@ -26,6 +26,8 @@ typedef struct
 } ws2812_driver_t;
 
 // Functions
+bool ws2812_init (ws2812_driver_t* ws_ctx, write_rgb_pixel w, uint32_t len);
+
 void ws2812_off (ws2812_driver_t* ws_ctx);
 void ws2812_monochrome (ws2812_driver_t* ws_ctx, ws2812_color_t rgb888);
 void ws2812_monochrome_slice (ws2812_driver_t* ws_ctx, ws2812_color_t rgb888, uint32_t first, uint32_t last);
