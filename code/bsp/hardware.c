@@ -22,6 +22,10 @@ encoder_ctx_t encoder0;
 encoder_ctx_t encoder1;
 encoder_ctx_t encoder2;
 
+button_ctx encsw0;
+button_ctx encsw1;
+button_ctx encsw2;
+
 uint16_t disp_buffer [ST7789_WIDTH * ST7789_HEIGHT];
 
 
@@ -222,6 +226,16 @@ bool gpio_get_enc2_b() {
     return gpio_get(PIN_ENCODER2_B);
 }
 
+bool gpio_get_enc0_sw() {
+    return gpio_get(PIN_ENCODER0_SW);
+}
+bool gpio_get_enc1_sw() {
+    return gpio_get(PIN_ENCODER1_SW);
+}
+bool gpio_get_enc2_sw() {
+    return gpio_get(PIN_ENCODER2_SW);
+}
+
 void init_cdisp() {
     cdisp.public.spi_w = spi_display_w;
     cdisp.public.cs_set = gpio_cs1_set;
@@ -284,4 +298,12 @@ void init_hardware() {
     encoder_init(&encoder0, time_us_64, gpio_get_enc0_a, false, gpio_get_enc0_b, false, false);
     encoder_init(&encoder1, time_us_64, gpio_get_enc1_a, false, gpio_get_enc1_b, false, false);
     encoder_init(&encoder2, time_us_64, gpio_get_enc2_a, false, gpio_get_enc2_b, false, false);
+
+    button_init(&encsw0, time_us_64, gpio_get_enc0_sw, false);
+    button_init(&encsw1, time_us_64, gpio_get_enc1_sw, false);
+    button_init(&encsw2, time_us_64, gpio_get_enc2_sw, false);
+
+    button_custom_timing(&encsw0, 100*1000, 500*1000);
+    button_custom_timing(&encsw1, 100*1000, 500*1000);
+    button_custom_timing(&encsw2, 100*1000, 500*1000);
 }

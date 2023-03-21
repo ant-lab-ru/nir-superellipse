@@ -15,9 +15,9 @@ struct Superellipse superellipse;
 int main() {
     superellipse.state = STATE_MONOCHROME_RGB;
 
-    superellipse.rgb_color.r = 0x70;
-    superellipse.rgb_color.g = 0x70;
-    superellipse.rgb_color.b = 0xFF;
+    superellipse.rgb_color.r = 0x40;
+    superellipse.rgb_color.g = 0x00;
+    superellipse.rgb_color.b = 0x40;
 
     stdio_init_all();
     init_hardware();
@@ -32,6 +32,10 @@ int main() {
         encoder_task(&encoder0);
         encoder_task(&encoder1);
         encoder_task(&encoder2);
+
+        button_task(&encsw0);
+        button_task(&encsw1);
+        button_task(&encsw2);
 
         logic_task();
         display_task();

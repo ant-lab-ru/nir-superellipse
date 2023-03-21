@@ -39,6 +39,7 @@ target_link_libraries(nir-superellipse
   hardware_spi
   hardware_pio
   encoder-driver
+  button-driver
 )
 
 pico_generate_pio_header(nir-superellipse ${CMAKE_CURRENT_LIST_DIR}/bsp/ws2812.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/generated)

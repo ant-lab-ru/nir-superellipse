@@ -1,8 +1,8 @@
 #ifndef __PINS_H
 #define __PINS_H
 
-// #define PIN_WS2812      3
-#define PIN_WS2812      23
+#define PIN_WS2812      3
+// #define PIN_WS2812      23
 
 #define PIN_LED         25
 
@@ -21,17 +21,18 @@
 #define PIN_ST7789_RST1 8
 #define PIN_ST7789_RST2 12
 
-#define PIN_ENCODER0_A  19
-#define PIN_ENCODER0_B  27
+#define PIN_ENCODER0_A  21
+#define PIN_ENCODER0_B  22
 
 #define PIN_ENCODER1_A  20
 #define PIN_ENCODER1_B  26
 
-#define PIN_ENCODER2_A  21
-#define PIN_ENCODER2_B  22
+#define PIN_ENCODER2_A  19
+#define PIN_ENCODER2_B  27
 
-#define PIN_ENCODER0_SW 28
+
+#define PIN_ENCODER0_SW 17
 #define PIN_ENCODER1_SW 18
-#define PIN_ENCODER2_SW 17
+#define PIN_ENCODER2_SW 28
 
 #endif // #ifndef __PINS_H

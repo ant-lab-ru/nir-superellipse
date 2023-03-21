@@ -3,62 +3,55 @@
 #include "../main.h"
 #include "../bsp/hardware.h"
 
-void logic_task() {
+static uint32_t enc0_inc = 1;
 
+void logic_task() {
     /* Logic for state update*/
 
     switch (superellipse.state) {
         case STATE_MONOCHROME_RGB:
             /* Red color */
-            if ((uint32_t)encoder0.cw_counter + (uint32_t)superellipse.rgb_color.r >= 255 ) {
-                superellipse.rgb_color.r = 255;
-            }
-            else {
-                superellipse.rgb_color.r += encoder0.cw_counter;
-            }
+
+            superellipse.rgb_color.r += (encsw0.spush * 0x20);
+            encsw0.spush = 0;
+
+            superellipse.rgb_color.r += encoder0.cw_counter;
             encoder0.cw_counter = 0;
 
-            if ((uint32_t)encoder0.ccw_counter >= (uint32_t)superellipse.rgb_color.r ) {
-                superellipse.rgb_color.r = 0;
-            }
-            else {
-                superellipse.rgb_color.r -= encoder0.ccw_counter;
-            }
+            superellipse.rgb_color.r -= (encsw0.lpush * 0x20);
+            encsw0.lpush = 0;
+
+            superellipse.rgb_color.r -= encoder0.ccw_counter;
             encoder0.ccw_counter = 0;
 
             /* Green color */
-            if ((uint32_t)encoder1.cw_counter + (uint32_t)superellipse.rgb_color.g >= 255 ) {
-                superellipse.rgb_color.g = 255;
-            }
-            else {
-                superellipse.rgb_color.g += encoder1.cw_counter;
-            }
+
+            superellipse.rgb_color.g += (encsw1.spush * 0x20);
+            encsw1.spush = 0;
+
+            superellipse.rgb_color.g += encoder1.cw_counter;
             encoder1.cw_counter = 0;
 
-            if ((uint32_t)encoder1.ccw_counter >= (uint32_t)superellipse.rgb_color.g ) {
-                superellipse.rgb_color.g = 0;
-            }
-            else {
-                superellipse.rgb_color.g -= encoder1.ccw_counter;
-            }
+            superellipse.rgb_color.g -= (encsw1.lpush * 0x20);
+            encsw1.lpush = 0;
+
+            superellipse.rgb_color.g -= encoder1.ccw_counter;
             encoder1.ccw_counter = 0;
 
             /* Blue color */
-            if ((uint32_t)encoder2.cw_counter + (uint32_t)superellipse.rgb_color.b >= 255 ) {
-                superellipse.rgb_color.b = 255;
-            }
-            else {
-                superellipse.rgb_color.b += encoder2.cw_counter;
-            }
+            
+            superellipse.rgb_color.b += (encsw2.spush * 0x20);
+            encsw2.spush = 0;
+
+            superellipse.rgb_color.b += encoder2.cw_counter;
             encoder2.cw_counter = 0;
 
-            if ((uint32_t)encoder2.ccw_counter >= (uint32_t)superellipse.rgb_color.b ) {
-                superellipse.rgb_color.b = 0;
-            }
-            else {
-                superellipse.rgb_color.b -= encoder2.ccw_counter;
-            }
+            superellipse.rgb_color.b -= (encsw2.lpush * 0x20);
+            encsw2.lpush = 0;
+
+            superellipse.rgb_color.b -= encoder2.ccw_counter;
             encoder2.ccw_counter = 0;
+
             break;
         
         case STATE_MONOCHROME_HSV:

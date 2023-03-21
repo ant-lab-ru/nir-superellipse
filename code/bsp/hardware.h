@@ -5,6 +5,7 @@
 #include "../drivers/st7789-driver/st7789-driver.h"
 #include "../drivers/ws2812-driver/ws2812-driver.h"
 #include "../deneg-lib/drivers/encoder-driver/include/encoder-driver.h"
+#include "../deneg-lib/drivers/button-driver/include/button-driver.h"
 
 extern st7789_driver_t rdisp;
 extern st7789_driver_t cdisp;
@@ -13,6 +14,9 @@ extern ws2812_driver_t ws;
 extern encoder_ctx_t encoder0;
 extern encoder_ctx_t encoder1;
 extern encoder_ctx_t encoder2;
+extern button_ctx encsw0;
+extern button_ctx encsw1;
+extern button_ctx encsw2;
 
 void init_hardware();
 void put_pixel(uint32_t pixel_grb);
